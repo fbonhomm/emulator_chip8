@@ -10,5 +10,6 @@ require (
 	github.com/go-gl/glfw v0.0.0-20190217072633-93b30450e032 // indirect
 	github.com/go-gl/mathgl v0.0.0-20180804195959-cdf14b6b8f8a // indirect
 	github.com/pkg/errors v0.8.1 // indirect
-	golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f // indirect
+	github.com/veandco/go-sdl2 v0.3.0
+	golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f
 )

@@ -1,43 +1,97 @@
-package display
+package main
 
 import (
+	"fmt"
+	"image/color"
+	"time"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 )
 
-const PIXEL_SIZE unit8 = 8
-const PIXEL_BLACK unit8 = 0
-const PIXEL_WHITE unit8 = 1
-const HEIGHT unit8 = 32
-const WIDTH unit8 = 64
-const WINDOW_HEIGHT unit16 = HEIGHT * PIXEL_SIZE
-const WINDOW_WIDTH unit16 = WIDTH * PIXEL_SIZE
+const pixelSize uint8 = 16
+const height uint8 = 32
+const width uint8 = 64
+const windowHeight uint16 = uint16(height) * uint16(pixelSize)
+const windowWidth uint16 = uint16(width) * uint16(pixelSize)
 
-
-type Pixel struct {
-  color uint8, // couleur du pixel
+type screen struct {
+	display *pixel.PictureData
+	window  *pixelgl.Window
 }
 
-func run() {
-  cfg := pixelgl.WindowConfig{
-    Title: "Test",
-    Bounds: pixel.R(0, 0, 1024, 768),
-  }
+func (s *screen) run() {
+	win, err := pixelgl.NewWindow(pixelgl.WindowConfig{
+		Title:     "Emulator Chip8",
+		Bounds:    pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
+		Resizable: false,
+		VSync:     true,
+	})
 
-  win, err := pixelgl.NewWindow(cfg)
+	if err != nil {
+		panic(err)
+	}
 
-  if (err != nil) {
-    panic(err)
-  }
+	win.Clear(colornames.Black)
 
-  for !win.Closed() {
-    win.Update()
-  }
+	s.window = win
+	var x uint8 = 0
+	var y uint8 = 0
+	for !win.Closed() {
+		x++
+		y++
+		if x >= width {
+			x = 0
+		}
+		if y >= height {
+			y = 0
+		}
+
+		fmt.Printf("x: %v, y: %v\n", x, y)
+
+		s.drawPixel(x, y)
+		win.Update()
+		time.Sleep(1 * time.Second)
+	}
+
+	win.Destroy()
 }
+
+func (s *screen) initialize() {
+	s.display = &pixel.PictureData{
+		Pix:    make([]color.RGBA, uint32(windowWidth)*uint32(windowHeight)),
+		Stride: int(windowWidth),
+		Rect:   pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
+	}
+
+	pixelgl.Run(s.run)
+}
+
+func (s *screen) drawPixel(x uint8, y uint8) {
+	for ; x < (x + pixelSize); x++ {
+		for ; y < (y + pixelSize); y++ {
+			s.display.Pix[x*y] = colornames.White
+		}
+	}
+
+	spr := pixel.NewSprite(
+		pixel.Picture(s.display),
+		pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
+	)
+	spr.Draw(s.window, pixel.IM)
+}
+
+// func (s *screen) updateWindow() {
+// 	for x := uint8(0); x < width; x++ {
+// 		for y := uint8(0); y < height; y++ {
+//
+// 		}
+// 	}
+// }
 
 func main() {
-	var test[10] uint8
+	var win = screen{}
 
-	fmt.Printf("%v\n", test)
-  // pixelgl.Run(run)
+	win.initialize()
 }
