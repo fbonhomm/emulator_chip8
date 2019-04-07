@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
-	"time"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
+	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 const pixelSize uint8 = 16
@@ -16,79 +13,54 @@ const width uint8 = 64
 const windowHeight uint16 = uint16(height) * uint16(pixelSize)
 const windowWidth uint16 = uint16(width) * uint16(pixelSize)
 
-type screen struct {
-	display *pixel.PictureData
-	window  *pixelgl.Window
+type elementaryBlock struct {
+	opts  *ebiten.DrawImageOptions
+	color color.Color
 }
 
-func (s *screen) run() {
-	win, err := pixelgl.NewWindow(pixelgl.WindowConfig{
-		Title:     "Emulator Chip8",
-		Bounds:    pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
-		Resizable: false,
-		VSync:     true,
-	})
+type screen struct {
+	display [width][height]elementaryBlock
+	x       int
+	y       int
+}
 
-	if err != nil {
-		panic(err)
+func (s *screen) update(window *ebiten.Image) error {
+	// window.Fill(color.Black)
+	window.Fill(color.NRGBA{0xff, 0x00, 0x00, 0xff})
+
+	if ebiten.IsDrawingSkipped() {
+		return nil
 	}
 
-	win.Clear(colornames.Black)
-
-	s.window = win
-	var x uint8 = 0
-	var y uint8 = 0
-	for !win.Closed() {
-		x++
-		y++
-		if x >= width {
-			x = 0
-		}
-		if y >= height {
-			y = 0
-		}
-
-		fmt.Printf("x: %v, y: %v\n", x, y)
-
-		s.drawPixel(x, y)
-		win.Update()
-		time.Sleep(1 * time.Second)
-	}
-
-	win.Destroy()
+	ebitenutil.DebugPrint(screen, "Our first game in Ebiten!")
+	s.x++
+	s.y++
+	s.drawPixel(x, y, window)
+	return nil
 }
 
 func (s *screen) initialize() {
-	s.display = &pixel.PictureData{
-		Pix:    make([]color.RGBA, uint32(windowWidth)*uint32(windowHeight)),
-		Stride: int(windowWidth),
-		Rect:   pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
-	}
-
-	pixelgl.Run(s.run)
-}
-
-func (s *screen) drawPixel(x uint8, y uint8) {
 	for ; x < (x + pixelSize); x++ {
 		for ; y < (y + pixelSize); y++ {
-			s.display.Pix[x*y] = colornames.White
+			s.display[x][y].opts.GeoM.Translate(x*pixelSize, y*pixelSize)
+			s.display[x][y].color = color.Black
 		}
 	}
 
-	spr := pixel.NewSprite(
-		pixel.Picture(s.display),
-		pixel.R(0, 0, float64(windowWidth), float64(windowHeight)),
-	)
-	spr.Draw(s.window, pixel.IM)
+	err := ebiten.Run(s.update, windowWidth, windowHeight, 1, "Emulator Chip8")
+	if err != nil {
+		panic(err)
+	}
 }
 
-// func (s *screen) updateWindow() {
-// 	for x := uint8(0); x < width; x++ {
-// 		for y := uint8(0); y < height; y++ {
-//
-// 		}
-// 	}
-// }
+func (s *screen) drawPixel(x, y int, window *ebiten.Image) {
+	var square *ebiten.Image
+
+	square, _ = ebiten.NewImage(pixelSize, pixelSize, ebiten.FilterNearest)
+
+	square.fill(color.White)
+	window.DrawImage(square, s.display[x][y].opts)
+}
 
 func main() {
 	var win = screen{}
