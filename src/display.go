@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -11,6 +13,10 @@ const windowHeight uint32 = height * pixelSize
 const windowWidth uint32 = width * pixelSize
 const white uint32 = 0xffffffff
 const black uint32 = 0x00000000
+const opBysec uint32 = 4
+const fps uint32 = 60
+
+var delay uint32 = uint32(math.Round(float64(fps / opBysec)))
 
 type elementaryBlock struct {
 	color uint32
@@ -26,7 +32,6 @@ func (s *screen) initialize() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
-	defer sdl.Quit()
 
 	window, err := sdl.CreateWindow(
 		"Emulator Chip8",
@@ -37,7 +42,6 @@ func (s *screen) initialize() {
 	if err != nil {
 		panic(err)
 	}
-	defer window.Destroy()
 
 	surface, err := window.GetSurface()
 	if err != nil {
@@ -48,8 +52,12 @@ func (s *screen) initialize() {
 	s.surface = surface
 	s.surface.FillRect(nil, black)
 	s.window.UpdateSurface()
+}
 
+func (s *screen) update() {
 	running := true
+	// var x uint32 = 0
+	// var y uint32 = 0
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -58,10 +66,24 @@ func (s *screen) initialize() {
 				break
 			}
 		}
+		// if x >= width {
+		// 	x = 0
+		// 	y++
+		// }
+		//
+		// if y >= height {
+		// 	running = false
+		// 	break
+		// }
+		sdl.Delay(delay)
+		// s.printPixel(x, y, white)
+		// x++
 	}
+	s.window.Destroy()
+	sdl.Quit()
 }
 
-func (s *screen) initDisplay() {
+func (s *screen) removePixel() {
 	for x := 0; uint32(x) < width; x++ {
 		for y := 0; uint32(y) < height; y++ {
 			s.display[x][y].color = black
@@ -69,17 +91,18 @@ func (s *screen) initDisplay() {
 	}
 }
 
-func (s *screen) printPixel(x, y uint32) {
+func (s *screen) printPixel(x, y, color uint32) {
 	s.surface.FillRect(nil, 0)
 
-	rect := sdl.Rect{int32(x), int32(y), int32(pixelSize), int32(pixelSize)}
-	s.surface.FillRect(&rect, 0xffff0000)
+	rect := sdl.Rect{int32(x * pixelSize), int32(y * pixelSize), int32(pixelSize), int32(pixelSize)}
+	s.surface.FillRect(&rect, color)
 	s.window.UpdateSurface()
 }
 
 func main() {
 	var win = screen{}
 
-	// win.initDisplay()
+	win.removePixel()
 	win.initialize()
+	win.update()
 }
