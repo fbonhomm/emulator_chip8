@@ -23,7 +23,7 @@ type elementaryBlock struct {
 }
 
 type screen struct {
-	display [width][height]elementaryBlock
+	pixels  [width][height]elementaryBlock
 	window  *sdl.Window
 	surface *sdl.Surface
 }
@@ -56,28 +56,21 @@ func (s *screen) initialize() {
 
 func (s *screen) update() {
 	running := true
-	// var x uint32 = 0
-	// var y uint32 = 0
+
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
+			switch t := event.(type) {
 			case *sdl.QuitEvent:
 				running = false
 				break
+			case *sdl.KeyboardEvent:
+				if t.Keysym.Sym == sdl.K_ESCAPE {
+					running = false
+					break
+				}
 			}
 		}
-		// if x >= width {
-		// 	x = 0
-		// 	y++
-		// }
-		//
-		// if y >= height {
-		// 	running = false
-		// 	break
-		// }
 		sdl.Delay(delay)
-		// s.printPixel(x, y, white)
-		// x++
 	}
 	s.window.Destroy()
 	sdl.Quit()
@@ -86,7 +79,7 @@ func (s *screen) update() {
 func (s *screen) removePixel() {
 	for x := 0; uint32(x) < width; x++ {
 		for y := 0; uint32(y) < height; y++ {
-			s.display[x][y].color = black
+			s.pixels[x][y].color = black
 		}
 	}
 }
