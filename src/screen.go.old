@@ -1,4 +1,4 @@
-package main
+package screen
 
 import (
 	"math"
@@ -76,6 +76,11 @@ func (s *screen) update() {
 	sdl.Quit()
 }
 
+func (s *screen) removeScreen() {
+	s.surface.FillRect(nil, black)
+	s.window.UpdateSurface()
+}
+
 func (s *screen) removePixel() {
 	for x := 0; uint32(x) < width; x++ {
 		for y := 0; uint32(y) < height; y++ {
@@ -92,10 +97,11 @@ func (s *screen) printPixel(x, y, color uint32) {
 	s.window.UpdateSurface()
 }
 
-func main() {
-	var win = screen{}
-
-	win.removePixel()
-	win.initialize()
-	win.update()
-}
+//
+// func main() {
+// 	var win = screen{}
+//
+// 	win.removePixel()
+// 	win.initialize()
+// 	win.update()
+// }
