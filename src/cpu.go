@@ -43,7 +43,7 @@ func (c *CPU) get() uint16 {
 }
 
 // return index opcode or -1 if not found
-func (c *CPU) identifyOpcode(opcode uint16) uint8 {
+func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	var idx uint8
 
 	for idx = 0; idx < nbrOpcode; idx++ {
