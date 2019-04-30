@@ -23,6 +23,8 @@ var opcodeID = []uint16{
 	0xF00A, 0xF015, 0xF018, 0xF01E, 0xF029, 0xF033, 0xF055, 0xF065,
 }
 
+// var identifyOpcode uint8
+
 // CPU primary struct
 type CPU struct {
 	memory       [sizeMemory]uint8     // tableaux qui represente la memoire
