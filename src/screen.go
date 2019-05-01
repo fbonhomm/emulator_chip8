@@ -18,13 +18,24 @@ const fps uint32 = 60
 
 var delay uint32 = uint32(math.Round(float64(fps / opBysec)))
 
-type elementaryBlock struct {
-	color uint32
+// KEYBOARD struct screen
+type KEYBOARD struct {
+	press uint8
+	code uint8
+}
+
+var keybords = []KEYBOARD{
+	KEYBOARD{0, sdl.K_0}, KEYBOARD{0, sdl.K_1}, KEYBOARD{0, sdl.K_2},
+	KEYBOARD{0, sdl.K_3}, KEYBOARD{0, sdl.K_4}, KEYBOARD{0, sdl.K_5},
+	KEYBOARD{0, sdl.K_6}, KEYBOARD{0, sdl.K_7}, KEYBOARD{0, sdl.K_8},
+	KEYBOARD{0, sdl.K_9}, KEYBOARD{0, sdl.K_a}, KEYBOARD{0, sdl.K_b},
+	KEYBOARD{0, sdl.K_c}, KEYBOARD{0, sdl.K_d}, KEYBOARD{0, sdl.K_e},
+	KEYBOARD{0, sdl.K_f}
 }
 
 // SCREEN struct screen
 type SCREEN struct {
-	pixels  [width][height]elementaryBlock
+	pixels  [width][height]uint8
 	window  *sdl.Window
 	surface *sdl.Surface
 }
@@ -62,10 +73,23 @@ func (s *SCREEN) Event() {
 		switch t := event.(type) {
 		case *sdl.QuitEvent:
 			return false
-		case *sdl.KeyboardEvent:
+		case *sdl.KEYDOWN:
+			for i := 0; i < 15; i++ {
+				if t.Keysym.Sym == keybords[i].code {
+					keybords[i].pressed = 0
+				}
+			}
+			break
+		case *sdl.KEYUP:
+			for i := 0; i < 15; i++ {
+				if t.Keysym.Sym == keybords[i].code {
+					keybords[i].pressed = 1
+				}
+			}
 			if t.Keysym.Sym == sdl.K_ESCAPE {
 				return false
 			}
+			break
 		}
 	}
 	sdl.Delay(delay)
@@ -80,24 +104,31 @@ func (s *screen) Destroy() {
 
 // RemoveScreen method
 func (s *SCREEN) RemoveScreen() {
+	for x := uint32(0); x < width; x++ {
+		for y := uint32(0); y < height; y++ {
+			s.pixels[x][y] = 0
+		}
+	}
 	s.surface.FillRect(nil, black)
 	s.window.UpdateSurface()
 }
 
-// RemovePixel method
-func (s *SCREEN) RemovePixel() {
-	for x := 0; uint32(x) < width; x++ {
-		for y := 0; uint32(y) < height; y++ {
-			s.pixels[x][y].color = black
-		}
-	}
+// checkKey method return 1 if key down
+func (s *SCREEN) checkKey(key) uint8 {
+	return keybords[key].pressed
 }
 
-// PrintPixel method
-func (s *SCREEN) PrintPixel(x, y, color uint32) {
-	s.surface.FillRect(nil, 0)
-
-	rect := sdl.Rect{int32(x * pixelSize), int32(y * pixelSize), int32(pixelSize), int32(pixelSize)}
-	s.surface.FillRect(&rect, color)
-	s.window.UpdateSurface()
+// waitPressKey method return 1 if key down
+func (s *SCREEN) waitPressKey(key) {
+	for true {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch t := event.(type) {
+			case *sdl.KEYUP:
+				if t.Keysym.Sym == keybords[key].code {
+					keybords[i].pressed = 1
+					return
+				}
+			}
+		}
+	}
 }

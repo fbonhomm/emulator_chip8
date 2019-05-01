@@ -1,12 +1,6 @@
 package CLS
 
-import (
-	screen "emulator/src"
-)
-
-// CLS remove screen
+// CLS 00E0 - Clear the display.
 func CLS(s *screen) {
-	var r = screen.SCREEN{}
-
 	s.RemoveScreen()
 }

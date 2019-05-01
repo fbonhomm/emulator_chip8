@@ -25,15 +25,15 @@ var opcodeID = []uint16{
 
 // CPU primary struct
 type CPU struct {
-	memory       [sizeMemory]uint8     // tableaux qui represente la memoire
-	register     [nbrRegister]uint8    //  tableaux qui represente les registres V{0..F}
-	stack        [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
-	indexMemory  uint16                // represente la tete de lecture de la memoire
-	indexStack   uint8                 // represente la tete de lecture de la stack
-	systemTimer  uint8                 // mimuterie systeme
-	soundTimer   uint8                 // mimuterie sonore
-	addressStock uint16                // stocke une adresse memoire
-	display      *screen               // pointer screen
+	memory      [sizeMemory]uint16    // tableaux qui represente la memoire
+	register    [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
+	stack       [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
+	pc          uint16                // represente la tete de lecture de la memoire PC programCounter
+	I           uint16                // stocke une adresse memoire
+	sp          uint8                 // represente la tete de lecture de la stack stackPointer
+	systemTimer uint8                 // mimuterie systeme
+	soundTimer  uint8                 // mimuterie sonore
+	display     *screen               // pointer screen
 }
 
 // IdentifyOpcode return index opcode or -1 if not found
@@ -41,7 +41,7 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	var idx uint8
 
 	for idx = 0; idx < nbrOpcode; idx++ {
-		if opcode&opcodeMask[idx] == opcodeID[idx] {
+		if (opcode & opcodeMask[idx]) == opcodeID[idx] {
 			break
 		}
 	}
@@ -59,8 +59,9 @@ func (c *CPU) InterpreterOpcode(opcode uint16) {
 	case 1:
 		opcode.CLS(s.display)
 		break
-		// case 2:
-		// case 3:
+	// case 2:
+	case 3:
+		opcode.JPA(c)
 		// case 4:
 		// case 5:
 		// case 6:
@@ -92,6 +93,7 @@ func (c *CPU) InterpreterOpcode(opcode uint16) {
 		// case 33:
 		// case 34:
 	}
+	c.pc++
 }
 
 // Decrease decremente les timers
