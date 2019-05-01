@@ -22,13 +22,15 @@ type elementaryBlock struct {
 	color uint32
 }
 
-type screen struct {
+// SCREEN struct screen
+type SCREEN struct {
 	pixels  [width][height]elementaryBlock
 	window  *sdl.Window
 	surface *sdl.Surface
 }
 
-func (s *screen) initialize() {
+// Initialize method
+func (s *SCREEN) Initialize() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
@@ -54,34 +56,36 @@ func (s *screen) initialize() {
 	s.window.UpdateSurface()
 }
 
-func (s *screen) update() {
-	running := true
-
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch t := event.(type) {
-			case *sdl.QuitEvent:
-				running = false
-				break
-			case *sdl.KeyboardEvent:
-				if t.Keysym.Sym == sdl.K_ESCAPE {
-					running = false
-					break
-				}
+// Event method
+func (s *SCREEN) Event() {
+	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+		switch t := event.(type) {
+		case *sdl.QuitEvent:
+			return false
+		case *sdl.KeyboardEvent:
+			if t.Keysym.Sym == sdl.K_ESCAPE {
+				return false
 			}
 		}
-		sdl.Delay(delay)
 	}
+	sdl.Delay(delay)
+	return true
+}
+
+// Destroy window destroy
+func (s *screen) Destroy() {
 	s.window.Destroy()
 	sdl.Quit()
 }
 
-func (s *screen) removeScreen() {
+// RemoveScreen method
+func (s *SCREEN) RemoveScreen() {
 	s.surface.FillRect(nil, black)
 	s.window.UpdateSurface()
 }
 
-func (s *screen) removePixel() {
+// RemovePixel method
+func (s *SCREEN) RemovePixel() {
 	for x := 0; uint32(x) < width; x++ {
 		for y := 0; uint32(y) < height; y++ {
 			s.pixels[x][y].color = black
@@ -89,19 +93,11 @@ func (s *screen) removePixel() {
 	}
 }
 
-func (s *screen) printPixel(x, y, color uint32) {
+// PrintPixel method
+func (s *SCREEN) PrintPixel(x, y, color uint32) {
 	s.surface.FillRect(nil, 0)
 
 	rect := sdl.Rect{int32(x * pixelSize), int32(y * pixelSize), int32(pixelSize), int32(pixelSize)}
 	s.surface.FillRect(&rect, color)
 	s.window.UpdateSurface()
 }
-
-//
-// func main() {
-// 	var win = screen{}
-//
-// 	win.removePixel()
-// 	win.initialize()
-// 	win.update()
-// }

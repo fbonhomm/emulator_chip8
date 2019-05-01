@@ -11,19 +11,17 @@ const nbrLevelStack uint8 = 16 // nombre de niveaux pour la stack
 const nbrOpcode uint8 = 35     // nombre de niveaux pour la stack
 
 var opcodeMask = []uint16{
-	0xFFFF, 0xFFFF, 0x0000, 0xF000, 0xF000, 0xF000, 0xF000, 0xF00F, 0xF000,
+	0x0000, 0xFFFF, 0xFFFF, 0xF000, 0xF000, 0xF000, 0xF000, 0xF00F, 0xF000,
 	0xF000, 0xF00F, 0xF00F, 0xF00F, 0xF00F, 0xF00F, 0xF00F, 0xF00F, 0xF00F,
 	0xF00F, 0xF00F, 0xF000, 0xF000, 0xF000, 0xF000, 0xF0FF, 0xF0FF, 0xF0FF,
 	0xF0FF, 0xF0FF, 0xF0FF, 0xF0FF, 0xF0FF, 0xF0FF, 0xF0FF, 0xF0FF,
 }
 var opcodeID = []uint16{
-	0x00E0, 0x00EE, 0x0FFF, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000,
+	0x0FFF, 0x00E0, 0x00EE, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000,
 	0x7000, 0x8000, 0x8001, 0x8002, 0x8003, 0x8004, 0x8005, 0x8006, 0x8007,
 	0x800E, 0x9000, 0xA000, 0xB000, 0xC000, 0xD000, 0xE09E, 0xE0A1, 0xF007,
 	0xF00A, 0xF015, 0xF018, 0xF01E, 0xF029, 0xF033, 0xF055, 0xF065,
 }
-
-// var identifyOpcode uint8
 
 // CPU primary struct
 type CPU struct {
@@ -35,14 +33,10 @@ type CPU struct {
 	systemTimer  uint8                 // mimuterie systeme
 	soundTimer   uint8                 // mimuterie sonore
 	addressStock uint16                // stocke une adresse memoire
+	display      *screen               // pointer screen
 }
 
-// define getter index_memory
-func (c *CPU) get() uint16 {
-	return c.indexMemory
-}
-
-// return index opcode or -1 if not found
+// IdentifyOpcode return index opcode or -1 if not found
 func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	var idx uint8
 
@@ -55,51 +49,53 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	return idx
 }
 
-// return index opcode or -1 if not found
-// func (c *CPU) interpreterOpcode(opcode uint16) {
-// 	idx = c.identifyOpcode(opcode)
-//
-// 	switch idx {
-// 	case 0:
-// 		break
-// 	case 1:
-// 	case 2:
-// 	case 3:
-// 	case 4:
-// 	case 5:
-// 	case 6:
-// 	case 7:
-// 	case 8:
-// 	case 9:
-// 	case 10:
-// 	case 11:
-// 	case 12:
-// 	case 13:
-// 	case 14:
-// 	case 15:
-// 	case 16:
-// 	case 17:
-// 	case 18:
-// 	case 19:
-// 	case 21:
-// 	case 22:
-// 	case 23:
-// 	case 24:
-// 	case 25:
-// 	case 26:
-// 	case 27:
-// 	case 28:
-// 	case 29:
-// 	case 30:
-// 	case 31:
-// 	case 32:
-// 	case 33:
-// 	case 34:
-// 	}
-// }
+// InterpreterOpcode return index opcode or -1 if not found
+func (c *CPU) InterpreterOpcode(opcode uint16) {
+	idx := c.IdentifyOpcode(opcode)
 
-// decremente les timers
-func (c *CPU) decrease() {
+	switch idx {
+	case 0:
+		break
+	case 1:
+		opcode.CLS(s.display)
+		break
+		// case 2:
+		// case 3:
+		// case 4:
+		// case 5:
+		// case 6:
+		// case 7:
+		// case 8:
+		// case 9:
+		// case 10:
+		// case 11:
+		// case 12:
+		// case 13:
+		// case 14:
+		// case 15:
+		// case 16:
+		// case 17:
+		// case 18:
+		// case 19:
+		// case 21:
+		// case 22:
+		// case 23:
+		// case 24:
+		// case 25:
+		// case 26:
+		// case 27:
+		// case 28:
+		// case 29:
+		// case 30:
+		// case 31:
+		// case 32:
+		// case 33:
+		// case 34:
+	}
+}
+
+// Decrease decremente les timers
+func (c *CPU) Decrease() {
 	if c.systemTimer > 0 {
 		c.systemTimer--
 	}
