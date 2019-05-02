@@ -2,7 +2,7 @@ package SHRVXVY
 
 // SHRVXVY 8xy6 - Set Vx = Vx SHR 1.
 func SHRVXVY(c *cpu, opcode uint16) {
-	var x uint8 = uint8((opcode & 0x0F00) >> 8)
+	var x uint8 = (opcode & 0x0F00) >> 8
 
 	c.register[0xF] = (x & 0x01)
 

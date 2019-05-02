@@ -1,5 +1,7 @@
 package cpu
 
+import "emulator/src/screen"
+
 // 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 // 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
 // 0x200-0xFFF - Program ROM and work RAM
@@ -33,7 +35,7 @@ type CPU struct {
 	sp          uint8                 // represente la tete de lecture de la stack stackPointer
 	systemTimer uint8                 // mimuterie systeme
 	soundTimer  uint8                 // mimuterie sonore
-	display     *screen               // pointer screen
+	display     *screen.SCREEN        // pointer screen
 }
 
 // IdentifyOpcode return index opcode or -1 if not found
@@ -50,51 +52,51 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 }
 
 // InterpreterOpcode return index opcode or -1 if not found
-func (c *CPU) InterpreterOpcode(opcode uint16) {
-	idx := c.IdentifyOpcode(opcode)
-
-	switch idx {
-	case 0:
-		break
-	case 1:
-		opcode.CLS(s.display)
-		break
-	// case 2:
-	case 3:
-		opcode.JPA(c)
-		// case 4:
-		// case 5:
-		// case 6:
-		// case 7:
-		// case 8:
-		// case 9:
-		// case 10:
-		// case 11:
-		// case 12:
-		// case 13:
-		// case 14:
-		// case 15:
-		// case 16:
-		// case 17:
-		// case 18:
-		// case 19:
-		// case 21:
-		// case 22:
-		// case 23:
-		// case 24:
-		// case 25:
-		// case 26:
-		// case 27:
-		// case 28:
-		// case 29:
-		// case 30:
-		// case 31:
-		// case 32:
-		// case 33:
-		// case 34:
-	}
-	c.pc++
-}
+// func (c *CPU) InterpreterOpcode(opcode uint16) {
+// 	idx := c.IdentifyOpcode(opcode)
+//
+// 	switch idx {
+// 	case 0:
+// 		break
+// 	case 1:
+// 		opcode.CLS(s.display)
+// 		break
+// 	// case 2:
+// 	case 3:
+// 		opcode.JPA(c)
+// 		// case 4:
+// 		// case 5:
+// 		// case 6:
+// 		// case 7:
+// 		// case 8:
+// 		// case 9:
+// 		// case 10:
+// 		// case 11:
+// 		// case 12:
+// 		// case 13:
+// 		// case 14:
+// 		// case 15:
+// 		// case 16:
+// 		// case 17:
+// 		// case 18:
+// 		// case 19:
+// 		// case 21:
+// 		// case 22:
+// 		// case 23:
+// 		// case 24:
+// 		// case 25:
+// 		// case 26:
+// 		// case 27:
+// 		// case 28:
+// 		// case 29:
+// 		// case 30:
+// 		// case 31:
+// 		// case 32:
+// 		// case 33:
+// 		// case 34:
+// 	}
+// 	c.pc++
+// }
 
 // Decrease decremente les timers
 func (c *CPU) Decrease() {

@@ -1,10 +1,12 @@
 package DRWVXVY
 
+import "emulator/src/screen"
+
 // DRWVXVY Dxyn - Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
-func DRWVXVY(c *cpu, opcode uint16, s *screen) {
-	var x uint8 = uint8((opcode & 0x0F00) >> 8)
-	var y uint8 = uint8((opcode & 0x00F0) >> 4)
-	var n uint16 = uint16((opcode & 0x000F))
+func DRWVXVY(c *cpu, opcode uint16, s *screen.SCREEN) {
+	var x uint8 = (opcode & 0x0F00) >> 8
+	var y uint8 = (opcode & 0x00F0) >> 4
+	var n uint16 = (opcode & 0x000F)
 	var pixel uint8
 
 	c.register[0xF] = 0

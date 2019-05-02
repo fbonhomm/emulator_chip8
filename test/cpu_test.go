@@ -1,7 +1,7 @@
-package test
+package cpu_test
 
 import (
-	cpu "emulator/src"
+	"emulator/src/cpu"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

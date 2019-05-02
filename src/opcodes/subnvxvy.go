@@ -2,8 +2,8 @@ package SUBNVXVY
 
 // SUBNVXVY 8xy7 - Set Vx = Vy - Vx, set VF = NOT borrow.
 func SUBNVXVY(c *cpu, opcode uint16) {
-	var x uint8 = uint8((opcode & 0x0F00) >> 8)
-	var y uint8 = uint8((opcode & 0x00F0) >> 4)
+	var x uint8 = (opcode & 0x0F00) >> 8
+	var y uint8 = (opcode & 0x00F0) >> 4
 
 	if c.register[y] > c.register[x] {
 		c.register[0xF] = 1
