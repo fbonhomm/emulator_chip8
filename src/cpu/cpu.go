@@ -1,6 +1,9 @@
 package cpu
 
-import "emulator/src/screen"
+import (
+	"emulator/src/opcodes"
+	"emulator/src/screen"
+)
 
 // 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 // 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
@@ -27,15 +30,14 @@ var opcodeID = []uint16{
 
 // CPU primary struct
 type CPU struct {
-	memory      [sizeMemory]uint16    // tableaux qui represente la memoire
-	register    [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
-	stack       [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
-	pc          uint16                // represente la tete de lecture de la memoire PC programCounter
+	Memory      [sizeMemory]uint8     // tableaux qui represente la memoire
+	V           [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
+	Stack       [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
+	Pc          uint16                // represente la tete de lecture de la memoire PC programCounter
 	I           uint16                // stocke une adresse memoire
-	sp          uint8                 // represente la tete de lecture de la stack stackPointer
-	systemTimer uint8                 // mimuterie systeme
-	soundTimer  uint8                 // mimuterie sonore
-	display     *screen.SCREEN        // pointer screen
+	Sp          uint8                 // represente la tete de lecture de la stack stackPointer
+	SystemTimer uint8                 // mimuterie systeme
+	SoundTimer  uint8                 // mimuterie sonore
 }
 
 // IdentifyOpcode return index opcode or -1 if not found
@@ -51,59 +53,89 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	return idx
 }
 
-// InterpreterOpcode return index opcode or -1 if not found
-// func (c *CPU) InterpreterOpcode(opcode uint16) {
-// 	idx := c.IdentifyOpcode(opcode)
-//
-// 	switch idx {
-// 	case 0:
-// 		break
-// 	case 1:
-// 		opcode.CLS(s.display)
-// 		break
-// 	// case 2:
-// 	case 3:
-// 		opcode.JPA(c)
-// 		// case 4:
-// 		// case 5:
-// 		// case 6:
-// 		// case 7:
-// 		// case 8:
-// 		// case 9:
-// 		// case 10:
-// 		// case 11:
-// 		// case 12:
-// 		// case 13:
-// 		// case 14:
-// 		// case 15:
-// 		// case 16:
-// 		// case 17:
-// 		// case 18:
-// 		// case 19:
-// 		// case 21:
-// 		// case 22:
-// 		// case 23:
-// 		// case 24:
-// 		// case 25:
-// 		// case 26:
-// 		// case 27:
-// 		// case 28:
-// 		// case 29:
-// 		// case 30:
-// 		// case 31:
-// 		// case 32:
-// 		// case 33:
-// 		// case 34:
-// 	}
-// 	c.pc++
-// }
-
 // Decrease decremente les timers
 func (c *CPU) Decrease() {
-	if c.systemTimer > 0 {
-		c.systemTimer--
+	if c.SystemTimer > 0 {
+		c.SystemTimer--
 	}
-	if c.soundTimer > 0 {
-		c.soundTimer--
+	if c.SoundTimer > 0 {
+		c.SoundTimer--
 	}
+}
+
+// InterpreterOpcode return index opcode or -1 if not found
+func (c *CPU) InterpreterOpcode(display *screen.SCREEN, opcode uint16) {
+	idx := c.IdentifyOpcode(opcode)
+
+	switch idx {
+	case 0:
+		break
+	case 1:
+		opcodes.CLS(display)
+		// case 2:
+		// 	opcodes.RET(&c)
+		// case 3:
+		// 	opcodes.JPA(&c, opcode)
+		// 	case 4:
+		// 	opcodes.CA(c, opcode)
+		// case 5:
+		// 	opcodes.SEVXB(c, opcode)
+		// case 6:
+		// 	opcodes.SNEVXB(c, opcode)
+		// case 7:
+		// 	opcodes.SEVXVY(c, opcode)
+		// case 8:
+		// 	opcodes.LDVXB(c, opcode)
+		// case 9:
+		// 	opcodes.ADDVXB(c, opcode)
+		// case 10:
+		// 	opcodes.LDVXVY(c, opcode)
+		// case 11:
+		// 	opcodes.ORVXVY(c, opcode)
+		// case 12:
+		// 	opcodes.ANDVXVY(c, opcode)
+		// case 13:
+		// 	opcodes.XORVXVY(c, opcode)
+		// case 14:
+		// 	opcodes.ADDVXVY(c, opcode)
+		// case 15:
+		// 	opcodes.SUBVXVY(c, opcode)
+		// case 16:
+		// 	opcodes.SHRVX(c, opcode)
+		// case 17:
+		// 	opcodes.SUBNVXVY(c, opcode)
+		// case 18:
+		// 	opcodes.SHLVX(c, opcode)
+		// case 19:
+		// 	opcodes.SNEVXVY(c, opcode)
+		// case 21:
+		// 	opcodes.LDIA(c, opcode)
+		// case 22:
+		// 	opcodes.JPV0(c, opcode)
+		// case 23:
+		// 	opcodes.RNDVXB(c, opcode)
+		// case 24:
+		// 	opcodes.DRWVXVY(c, display, opcode)
+		// case 25:
+		// 	opcodes.SKPVX(c, opcode)
+		// case 26:
+		// 	opcodes.SKNPVX(c, opcode)
+		// case 27:
+		// 	opcodes.LDVXDT(c, opcode)
+		// case 28:
+		// 	opcodes.LDVXK(opcode)
+		// case 29:
+		// 	opcodes.LDDTVX(c, opcode)
+		// case 30:
+		// 	opcodes.LDSTVX(c, opcode)
+		// case 31:
+		// 	opcodes.ADDIVX(c, opcode)
+		// case 32:
+		// 	opcodes.LDBVX(c, opcode)
+		// case 33:
+		// 	opcodes.LDIVX(c, opcode)
+		// case 34:
+		// 	opcodes.LDVX(c, opcode)
+	}
+	c.Pc += 2
 }

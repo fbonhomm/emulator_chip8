@@ -8,11 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestADDIVX(t *testing.T) {
+func TestORVXVY(t *testing.T) {
 	var c = cpu.CPU{}
 
-	c.V[2] = 2
-	opcodes.ADDIVX(&c, 0x0200)
+	c.V[2] = 0x0F
+	c.V[3] = 0xF0
+	opcodes.ORVXVY(&c, 0x0320)
 
-	assert.Equal(t, uint16(2), c.I)
+	assert.Equal(t, uint8(0xFF), c.V[3])
 }

@@ -1,4 +1,4 @@
-package cpu_test
+package test
 
 import (
 	"emulator/src/cpu"

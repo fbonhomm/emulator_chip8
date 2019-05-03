@@ -1,6 +1,7 @@
 package keyboard
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -13,8 +14,8 @@ var delay uint32 = uint32(math.Round(float64(fps / opBysec)))
 
 // KEYBOARD struct screen
 type KEYBOARD struct {
-	pressed uint8
-	code    sdl.Keycode
+	Pressed uint8
+	Code    sdl.Keycode
 }
 
 // keybords touch keyboard
@@ -39,14 +40,14 @@ func Event() bool {
 			}
 			if t.Type == sdl.KEYDOWN {
 				for i := 0; i < 15; i++ {
-					if t.Keysym.Sym == keybords[i].code {
-						keybords[i].pressed = 0
+					if t.Keysym.Sym == keybords[i].Code {
+						keybords[i].Pressed = 0
 					}
 				}
 			} else if t.Type == sdl.KEYUP {
 				for i := 0; i < 15; i++ {
-					if t.Keysym.Sym == keybords[i].code {
-						keybords[i].pressed = 1
+					if t.Keysym.Sym == keybords[i].Code {
+						keybords[i].Pressed = 1
 					}
 				}
 			}
@@ -59,7 +60,12 @@ func Event() bool {
 
 // CheckKey method return 1 if key down
 func CheckKey(key uint8) uint8 {
-	return keybords[key].pressed
+	return keybords[key].Pressed
+}
+
+// GetKey method return 1 if key down
+func GetKey(key uint8) *KEYBOARD {
+	return &keybords[key]
 }
 
 // WaitPressKey method return 1 if key down
@@ -67,11 +73,12 @@ func WaitPressKey(key uint8) {
 	for true {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
-
 			case *sdl.KeyboardEvent:
-				if t.Type == sdl.KEYUP {
-					if t.Keysym.Sym == keybords[key].code {
-						keybords[key].pressed = 1
+				fmt.Println("KeyboardEvent")
+				if t.Type == sdl.KEYDOWN {
+					fmt.Println("KEYDOWN")
+					if t.Keysym.Sym == keybords[key].Code {
+						keybords[key].Pressed = 1
 						return
 					}
 				}

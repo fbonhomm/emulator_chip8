@@ -8,11 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestADDIVX(t *testing.T) {
+func TestLDIA(t *testing.T) {
 	var c = cpu.CPU{}
 
-	c.V[2] = 2
-	opcodes.ADDIVX(&c, 0x0200)
+	opcodes.LDIA(&c, 0x0234)
 
-	assert.Equal(t, uint16(2), c.I)
+	assert.Equal(t, uint16(0x0234), c.I)
 }

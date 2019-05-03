@@ -1,4 +1,4 @@
-package screen_test
+package test
 
 import (
 	"emulator/src/screen"

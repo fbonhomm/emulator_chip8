@@ -1,0 +1,17 @@
+package opcodes
+
+import (
+	"emulator/src/cpu"
+	"math/rand"
+	"time"
+)
+
+// RNDVXB Cxkk - Set Vx = random byte AND kk
+func RNDVXB(c *cpu.CPU, opcode uint16) {
+	x := uint8((opcode & 0x0F00) >> 8)
+	kk := uint8((opcode & 0x00FF))
+
+	rand.Seed(time.Now().UnixNano())
+
+	c.V[x] = uint8(rand.Intn(0xFF)) & kk
+}
