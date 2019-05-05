@@ -1,7 +1,6 @@
 package cpu
 
 import (
-	"emulator/src/opcodes"
 	"emulator/src/screen"
 )
 
@@ -28,6 +27,25 @@ var opcodeID = []uint16{
 	0xF00A, 0xF015, 0xF018, 0xF01E, 0xF029, 0xF033, 0xF055, 0xF065,
 }
 
+var fonts = []uint8{
+	0x0F, 0x90, 0x90, 0x90, 0xF0, // 0
+	0x20, 0x60, 0x20, 0x20, 0x70, // 1
+	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+	0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+	0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+	0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+	0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+	0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+	0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+	0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+	0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+	0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+	0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+	0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+	0xF0, 0x80, 0xF0, 0x80, 0x80, // F
+}
+
 // CPU primary struct
 type CPU struct {
 	Memory      [sizeMemory]uint8     // tableaux qui represente la memoire
@@ -40,102 +58,97 @@ type CPU struct {
 	SoundTimer  uint8                 // mimuterie sonore
 }
 
-// IdentifyOpcode return index opcode or -1 if not found
-func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
-	var idx uint8
-
-	for idx = 0; idx < nbrOpcode; idx++ {
-		if (opcode & opcodeMask[idx]) == opcodeID[idx] {
-			break
-		}
-	}
-
-	return idx
+// Initialize init cpu
+func (c *CPU) Initialize(rom []uint8) {
+	copy(c.Memory[0:], fonts)
+	copy(c.Memory[0x200:], rom)
+	c.Pc = 0x200
 }
 
-// Decrease decremente les timers
-func (c *CPU) Decrease() {
-	if c.SystemTimer > 0 {
-		c.SystemTimer--
+// IdentifyOpcode return index opcode or -1 if not found
+func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
+	for idx := uint8(0); idx < nbrOpcode; idx++ {
+		if (opcode & opcodeMask[idx]) == opcodeID[idx] {
+			return idx
+		}
 	}
-	if c.SoundTimer > 0 {
-		c.SoundTimer--
-	}
+	return 0
 }
 
 // InterpreterOpcode return index opcode or -1 if not found
-func (c *CPU) InterpreterOpcode(display *screen.SCREEN, opcode uint16) {
+func (c *CPU) InterpreterOpcode(display *screen.SCREEN) {
+	opcode := ((uint16(c.Memory[c.Pc]) << 8) | uint16(c.Memory[c.Pc+1]))
 	idx := c.IdentifyOpcode(opcode)
 
 	switch idx {
 	case 0:
 		break
 	case 1:
-		opcodes.CLS(display)
-		// case 2:
-		// 	opcodes.RET(&c)
-		// case 3:
-		// 	opcodes.JPA(&c, opcode)
-		// 	case 4:
-		// 	opcodes.CA(c, opcode)
-		// case 5:
-		// 	opcodes.SEVXB(c, opcode)
-		// case 6:
-		// 	opcodes.SNEVXB(c, opcode)
-		// case 7:
-		// 	opcodes.SEVXVY(c, opcode)
-		// case 8:
-		// 	opcodes.LDVXB(c, opcode)
-		// case 9:
-		// 	opcodes.ADDVXB(c, opcode)
-		// case 10:
-		// 	opcodes.LDVXVY(c, opcode)
-		// case 11:
-		// 	opcodes.ORVXVY(c, opcode)
-		// case 12:
-		// 	opcodes.ANDVXVY(c, opcode)
-		// case 13:
-		// 	opcodes.XORVXVY(c, opcode)
-		// case 14:
-		// 	opcodes.ADDVXVY(c, opcode)
-		// case 15:
-		// 	opcodes.SUBVXVY(c, opcode)
-		// case 16:
-		// 	opcodes.SHRVX(c, opcode)
-		// case 17:
-		// 	opcodes.SUBNVXVY(c, opcode)
-		// case 18:
-		// 	opcodes.SHLVX(c, opcode)
-		// case 19:
-		// 	opcodes.SNEVXVY(c, opcode)
-		// case 21:
-		// 	opcodes.LDIA(c, opcode)
-		// case 22:
-		// 	opcodes.JPV0(c, opcode)
-		// case 23:
-		// 	opcodes.RNDVXB(c, opcode)
-		// case 24:
-		// 	opcodes.DRWVXVY(c, display, opcode)
-		// case 25:
-		// 	opcodes.SKPVX(c, opcode)
-		// case 26:
-		// 	opcodes.SKNPVX(c, opcode)
-		// case 27:
-		// 	opcodes.LDVXDT(c, opcode)
-		// case 28:
-		// 	opcodes.LDVXK(opcode)
-		// case 29:
-		// 	opcodes.LDDTVX(c, opcode)
-		// case 30:
-		// 	opcodes.LDSTVX(c, opcode)
-		// case 31:
-		// 	opcodes.ADDIVX(c, opcode)
-		// case 32:
-		// 	opcodes.LDBVX(c, opcode)
-		// case 33:
-		// 	opcodes.LDIVX(c, opcode)
-		// case 34:
-		// 	opcodes.LDVX(c, opcode)
+		c.CLS(display)
+	case 2:
+		c.RET()
+	case 3:
+		c.JPA(opcode)
+	case 4:
+		c.CA(opcode)
+	case 5:
+		c.SEVXB(opcode)
+	case 6:
+		c.SNEVXB(opcode)
+	case 7:
+		c.SEVXVY(opcode)
+	case 8:
+		c.LDVXB(opcode)
+	case 9:
+		c.ADDVXB(opcode)
+	case 10:
+		c.LDVXVY(opcode)
+	case 11:
+		c.ORVXVY(opcode)
+	case 12:
+		c.ANDVXVY(opcode)
+	case 13:
+		c.XORVXVY(opcode)
+	case 14:
+		c.ADDVXVY(opcode)
+	case 15:
+		c.SUBVXVY(opcode)
+	case 16:
+		c.SHRVX(opcode)
+	case 17:
+		c.SUBNVXVY(opcode)
+	case 18:
+		c.SHLVX(opcode)
+	case 19:
+		c.SNEVXVY(opcode)
+	case 21:
+		c.LDIA(opcode)
+	case 22:
+		c.JPV0(opcode)
+	case 23:
+		c.RNDVXB(opcode)
+	case 24:
+		c.DRWVXVY(display, opcode)
+	case 25:
+		c.SKPVX(opcode)
+	case 26:
+		c.SKNPVX(opcode)
+	case 27:
+		c.LDVXDT(opcode)
+	case 28:
+		c.LDVXK(opcode)
+	case 29:
+		c.LDDTVX(opcode)
+	case 30:
+		c.LDSTVX(opcode)
+	case 31:
+		c.ADDIVX(opcode)
+	case 32:
+		c.LDBVX(opcode)
+	case 33:
+		c.LDIVX(opcode)
+	case 34:
+		c.LDVX(opcode)
 	}
 	c.Pc += 2
 }

@@ -1,0 +1,14 @@
+package cpu
+
+import (
+	"emulator/src/keyboard"
+)
+
+// SKNPVX ExA1 - Skip next instruction if key with the value of Vx is not pressed.
+func (c *CPU) SKNPVX(opcode uint16) {
+	x := uint8((opcode & 0x0F00) >> 8)
+
+	if keyboard.CheckKey(x) == 0 {
+		c.Pc += 2
+	}
+}

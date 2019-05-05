@@ -9,6 +9,6 @@ func TestLDVXK(t *testing.T) {
 
 	// s.Initialize()
 	// fmt.Println("PRESS A")
-	// opcodes.LDVXK(0x0A00)
+	// c.LDVXK(0x0A00)
 	// s.Destroy()
 }

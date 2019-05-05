@@ -2,7 +2,7 @@ package test
 
 import (
 	"emulator/src/cpu"
-	"emulator/src/opcodes"
+	
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +13,7 @@ func TestLDBVX(t *testing.T) {
 
 	c.V[2] = 134
 	c.I = 200
-	opcodes.LDBVX(&c, 0x0200)
+	c.LDBVX(0x0200)
 
 	assert.Equal(t, uint8(1), c.Memory[200])
 	assert.Equal(t, uint8(3), c.Memory[201])

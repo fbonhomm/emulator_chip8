@@ -2,7 +2,7 @@ package test
 
 import (
 	"emulator/src/cpu"
-	"emulator/src/opcodes"
+	
 	"emulator/src/screen"
 	"testing"
 
@@ -20,7 +20,7 @@ func TestDRWVXVY_WITHOUT_COLLISION(t *testing.T) {
 	c.Memory[3002] = 0xAA // 10101010
 	c.Memory[3003] = 0x3C // 00111100
 
-	opcodes.DRWVXVY(&c, &s, 0x0133)
+	c.DRWVXVY(&s, 0x0133)
 
 	assert.Equal(t, uint8(0), c.V[0xF])
 
@@ -43,7 +43,7 @@ func TestDRWVXVY_WITH_COLLISION(t *testing.T) {
 	c.Memory[3002] = 0xAA // 10101010
 	c.Memory[3003] = 0x3C // 00111100
 
-	opcodes.DRWVXVY(&c, &s, 0x0133)
+	c.DRWVXVY(&s, 0x0133)
 
 	assert.Equal(t, uint8(1), c.V[0xF])
 

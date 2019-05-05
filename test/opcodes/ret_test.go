@@ -2,7 +2,7 @@ package test
 
 import (
 	"emulator/src/cpu"
-	"emulator/src/opcodes"
+
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +13,7 @@ func TestRET(t *testing.T) {
 
 	c.Sp = 2
 	c.Stack[2] = 432
-	opcodes.RET(&c)
+	c.RET()
 
 	assert.Equal(t, uint16(432), c.Pc)
 }

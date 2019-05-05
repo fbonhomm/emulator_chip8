@@ -54,8 +54,12 @@ func Event() bool {
 			break
 		}
 	}
-	sdl.Delay(delay)
 	return true
+}
+
+// Delay method return 1 if key down
+func Delay() {
+	sdl.Delay(delay)
 }
 
 // CheckKey method return 1 if key down
