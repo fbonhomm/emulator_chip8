@@ -97,70 +97,103 @@ func (c *CPU) InterpreterOpcode(display *screen.SCREEN) {
 		break
 	case 1:
 		c.CLS(display)
+		break
 	case 2:
 		c.RET()
+		break
 	case 3:
 		c.JPA(opcode)
+		break
 	case 4:
 		c.CA(opcode)
+		break
 	case 5:
 		c.SEVXB(opcode)
+		break
 	case 6:
 		c.SNEVXB(opcode)
+		break
 	case 7:
 		c.SEVXVY(opcode)
+		break
 	case 8:
 		c.LDVXB(opcode)
+		break
 	case 9:
 		c.ADDVXB(opcode)
+		break
 	case 10:
 		c.LDVXVY(opcode)
+		break
 	case 11:
 		c.ORVXVY(opcode)
+		break
 	case 12:
 		c.ANDVXVY(opcode)
+		break
 	case 13:
 		c.XORVXVY(opcode)
+		break
 	case 14:
 		c.ADDVXVY(opcode)
+		break
 	case 15:
 		c.SUBVXVY(opcode)
+		break
 	case 16:
 		c.SHRVX(opcode)
+		break
 	case 17:
 		c.SUBNVXVY(opcode)
+		break
 	case 18:
 		c.SHLVX(opcode)
+		break
 	case 19:
 		c.SNEVXVY(opcode)
+		break
 	case 20:
 		c.LDIA(opcode)
+		break
 	case 21:
 		c.JPV0(opcode)
+		break
 	case 22:
 		c.RNDVXB(opcode)
+		break
 	case 23:
 		c.DRWVXVY(display, opcode)
+		break
 	case 24:
 		c.SKPVX(opcode)
+		break
 	case 25:
 		c.SKNPVX(opcode)
+		break
 	case 26:
 		c.LDVXDT(opcode)
+		break
 	case 27:
 		c.LDVXK(opcode)
+		break
 	case 28:
 		c.LDDTVX(opcode)
+		break
 	case 29:
 		c.LDSTVX(opcode)
+		break
 	case 30:
 		c.ADDIVX(opcode)
+		break
 	case 31:
 		c.LDBVX(opcode)
+		break
 	case 32:
 		c.LDIVX(opcode)
+		break
 	case 33:
 		c.LDVX(opcode)
+		break
 	}
 	c.Pc += 2
 }

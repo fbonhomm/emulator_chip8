@@ -3,6 +3,7 @@ package test
 import (
 	"emulator/src/screen"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -12,8 +13,8 @@ var s = screen.SCREEN{}
 func TestInitialize(t *testing.T) {
 	s.Initialize()
 
-	assert.Equal(t, len(s.Pixels), 64)
-	assert.Equal(t, len(s.Pixels[0]), 32)
+	assert.Equal(t, 32, len(s.Pixels))
+	assert.Equal(t, 64, len(s.Pixels[0]))
 	assert.NotNil(t, s.Window)
 	assert.NotNil(t, s.Surface)
 }
@@ -24,9 +25,12 @@ func TestDestroy(t *testing.T) {
 	assert.Nil(t, s.Surface)
 }
 
-func TestRemoveScreen(t *testing.T) {
-	s.Pixels[0][0] = 1
-	s.RemoveScreen()
+func TestApply(t *testing.T) {
+	s.Initialize()
 
-	assert.Equal(t, s.Pixels[0][0], uint8(0))
+	s.Pixels[0][0] = 1
+	s.Pixels[31][63] = 1
+	s.Apply()
+	time.Sleep(5000 * time.Millisecond)
+	s.Destroy()
 }

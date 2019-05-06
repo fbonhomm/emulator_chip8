@@ -6,5 +6,5 @@ import "emulator/src/keyboard"
 func (c *CPU) LDVXK(opcode uint16) {
 	x := uint8((opcode & 0x0F00) >> 8)
 
-	keyboard.WaitPressKey(x)
+	c.V[x] = keyboard.WaitPressKey()
 }

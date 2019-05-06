@@ -14,6 +14,7 @@ const black uint32 = 0x00000000
 
 // SCREEN struct screen
 type SCREEN struct {
+	ToDraw  bool
 	Pixels  [height][width]uint8
 	Drawn   [height][width]sdl.Rect
 	Window  *sdl.Window
@@ -56,10 +57,10 @@ func (s *SCREEN) initializeDrawn() {
 	for y := uint32(0); y < height; y++ {
 		for x := uint32(0); x < width; x++ {
 			s.Drawn[y][x] = sdl.Rect{
-				X: int32(x * pixelSize),
 				Y: int32(y * pixelSize),
-				W: int32(pixelSize),
+				X: int32(x * pixelSize),
 				H: int32(pixelSize),
+				W: int32(pixelSize),
 			}
 		}
 	}
@@ -87,6 +88,10 @@ func (s *SCREEN) Destroy() {
 
 // Apply method
 func (s *SCREEN) Apply() {
+	if s.ToDraw == false {
+		return
+	}
+
 	for y := uint32(0); y < height; y++ {
 		for x := uint32(0); x < width; x++ {
 			if s.Pixels[y][x] == 1 {
@@ -97,13 +102,5 @@ func (s *SCREEN) Apply() {
 		}
 	}
 	s.Window.UpdateSurface()
-}
-
-// RemoveScreen method
-func (s *SCREEN) RemoveScreen() {
-	for y := uint32(0); y < height; y++ {
-		for x := uint32(0); x < width; x++ {
-			s.Pixels[y][x] = 0
-		}
-	}
+	s.ToDraw = false
 }

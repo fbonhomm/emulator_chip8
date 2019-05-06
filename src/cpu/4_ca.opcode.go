@@ -2,8 +2,10 @@ package cpu
 
 // CA 2nnn - Call subroutine at nnn.
 func (c *CPU) CA(opcode uint16) {
-	c.Sp++
+	// Different de la doc
 	c.Stack[c.Sp] = c.Pc
+
+	c.Sp++
 
 	// recuperer juste l'address qui est defini par NNN
 	c.Pc = (opcode & 0x0FFF)

@@ -11,6 +11,5 @@ func (c *CPU) SUBNVXVY(opcode uint16) {
 		c.V[0xF] = 0
 	}
 
-	// division par 2 egal a c.V[x] /= 2
-	c.V[x] -= c.V[y]
+	c.V[x] = c.V[y] - c.V[x]
 }

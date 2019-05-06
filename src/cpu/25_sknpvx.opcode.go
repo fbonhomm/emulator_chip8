@@ -8,7 +8,7 @@ import (
 func (c *CPU) SKNPVX(opcode uint16) {
 	x := uint8((opcode & 0x0F00) >> 8)
 
-	if keyboard.CheckKey(x) == 0 {
+	if keyboard.CheckKey(c.V[x]) == 0 {
 		c.Pc += 2
 	}
 }

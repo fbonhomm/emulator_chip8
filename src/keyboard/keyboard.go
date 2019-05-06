@@ -1,7 +1,6 @@
 package keyboard
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -78,21 +77,13 @@ func GetKey(key uint8) *KEYBOARD {
 }
 
 // WaitPressKey method return 1 if key down
-func WaitPressKey(key uint8) {
+func WaitPressKey() uint8 {
 	for true {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch t := event.(type) {
-			case *sdl.KeyboardEvent:
-				fmt.Println("KeyboardEvent")
-				if t.Type == sdl.KEYDOWN {
-					fmt.Println("KEYDOWN")
-					if t.Keysym.Sym == keybords[key].Code {
-						keybords[key].Pressed = 1
-						return
-					}
-				}
-				break
+		for idx := 0; idx < len(keybords); idx++ {
+			if keybords[idx].Pressed == 1 {
+				return uint8(idx)
 			}
 		}
 	}
+	return 0
 }
