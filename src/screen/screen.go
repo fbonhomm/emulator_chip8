@@ -14,8 +14,8 @@ const black uint32 = 0x00000000
 
 // SCREEN struct screen
 type SCREEN struct {
-	Pixels  [width][height]uint8
-	Drawn   [width][height]sdl.Rect
+	Pixels  [height][width]uint8
+	Drawn   [height][width]sdl.Rect
 	Window  *sdl.Window
 	Surface *sdl.Surface
 }
@@ -53,11 +53,11 @@ func (s *SCREEN) initializeSurface() {
 }
 
 func (s *SCREEN) initializeDrawn() {
-	for x := uint32(0); x < width; x++ {
-		for y := uint32(0); y < height; y++ {
-			s.Drawn[x][y] = sdl.Rect{
-				X: int32(x),
-				Y: int32(y),
+	for y := uint32(0); y < height; y++ {
+		for x := uint32(0); x < width; x++ {
+			s.Drawn[y][x] = sdl.Rect{
+				X: int32(x * pixelSize),
+				Y: int32(y * pixelSize),
 				W: int32(pixelSize),
 				H: int32(pixelSize),
 			}
@@ -87,12 +87,12 @@ func (s *SCREEN) Destroy() {
 
 // Apply method
 func (s *SCREEN) Apply() {
-	for x := uint32(0); x < width; x++ {
-		for y := uint32(0); y < height; y++ {
-			if s.Pixels[x][y] == 1 {
-				s.Surface.FillRect(&s.Drawn[x][y], white)
+	for y := uint32(0); y < height; y++ {
+		for x := uint32(0); x < width; x++ {
+			if s.Pixels[y][x] == 1 {
+				s.Surface.FillRect(&s.Drawn[y][x], white)
 			} else {
-				s.Surface.FillRect(&s.Drawn[x][y], black)
+				s.Surface.FillRect(&s.Drawn[y][x], black)
 			}
 		}
 	}
@@ -101,9 +101,9 @@ func (s *SCREEN) Apply() {
 
 // RemoveScreen method
 func (s *SCREEN) RemoveScreen() {
-	for x := uint32(0); x < width; x++ {
-		for y := uint32(0); y < height; y++ {
-			s.Pixels[x][y] = 0
+	for y := uint32(0); y < height; y++ {
+		for x := uint32(0); x < width; x++ {
+			s.Pixels[y][x] = 0
 		}
 	}
 }

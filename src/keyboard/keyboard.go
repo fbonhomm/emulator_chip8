@@ -28,6 +28,11 @@ var keybords = []KEYBOARD{
 	KEYBOARD{0, sdl.K_f},
 }
 
+// GetOpBySec return operation number by second
+func GetOpBySec() uint32 {
+	return opBysec
+}
+
 // Event method
 func Event() bool {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {

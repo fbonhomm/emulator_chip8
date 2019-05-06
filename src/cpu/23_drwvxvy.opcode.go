@@ -2,6 +2,7 @@ package cpu
 
 import (
 	"emulator/src/screen"
+	"fmt"
 )
 
 // DRWVXVY Dxyn - Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
@@ -16,6 +17,7 @@ func (c *CPU) DRWVXVY(s *screen.SCREEN, opcode uint16) {
 		pixel = c.Memory[c.I+i]
 
 		for j := uint16(0); j < 8; j++ {
+			fmt.Printf("O: %d\n", (pixel & (0x80 >> j)))
 			if (pixel & (0x80 >> j)) != 0 {
 				if s.Pixels[y+i][x+j] == 1 {
 					c.V[0xF] = 1

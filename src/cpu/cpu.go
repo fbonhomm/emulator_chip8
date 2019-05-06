@@ -2,6 +2,7 @@ package cpu
 
 import (
 	"emulator/src/screen"
+	"fmt"
 )
 
 // 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
@@ -48,14 +49,14 @@ var fonts = []uint8{
 
 // CPU primary struct
 type CPU struct {
-	Memory      [sizeMemory]uint8     // tableaux qui represente la memoire
-	V           [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
-	Stack       [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
-	Pc          uint16                // represente la tete de lecture de la memoire PC programCounter
-	I           uint16                // stocke une adresse memoire
-	Sp          uint8                 // represente la tete de lecture de la stack stackPointer
-	SystemTimer uint8                 // mimuterie systeme
-	SoundTimer  uint8                 // mimuterie sonore
+	Memory [sizeMemory]uint8     // tableaux qui represente la memoire
+	V      [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
+	Stack  [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
+	Pc     uint16                // represente la tete de lecture de la memoire PC programCounter
+	I      uint16                // stocke une adresse memoire
+	Sp     uint8                 // represente la tete de lecture de la stack stackPointer
+	DT     uint8                 // mimuterie systeme
+	ST     uint8                 // mimuterie sonore
 }
 
 // Initialize init cpu
@@ -75,11 +76,22 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	return 0
 }
 
+// DecreaseTimer decrease cpu timer
+func (c *CPU) DecreaseTimer() {
+	if c.DT > 0 {
+		c.DT--
+	}
+	if c.ST > 0 {
+		c.ST--
+	}
+}
+
 // InterpreterOpcode return index opcode or -1 if not found
 func (c *CPU) InterpreterOpcode(display *screen.SCREEN) {
-	opcode := ((uint16(c.Memory[c.Pc]) << 8) | uint16(c.Memory[c.Pc+1]))
+	opcode := ((uint16(c.Memory[c.Pc]) << 8) + uint16(c.Memory[c.Pc+1]))
 	idx := c.IdentifyOpcode(opcode)
 
+	fmt.Printf("opcode: %x, idx: %d\n", opcode, idx)
 	switch idx {
 	case 0:
 		break
@@ -121,33 +133,33 @@ func (c *CPU) InterpreterOpcode(display *screen.SCREEN) {
 		c.SHLVX(opcode)
 	case 19:
 		c.SNEVXVY(opcode)
-	case 21:
+	case 20:
 		c.LDIA(opcode)
-	case 22:
+	case 21:
 		c.JPV0(opcode)
-	case 23:
+	case 22:
 		c.RNDVXB(opcode)
-	case 24:
+	case 23:
 		c.DRWVXVY(display, opcode)
-	case 25:
+	case 24:
 		c.SKPVX(opcode)
-	case 26:
+	case 25:
 		c.SKNPVX(opcode)
-	case 27:
+	case 26:
 		c.LDVXDT(opcode)
-	case 28:
+	case 27:
 		c.LDVXK(opcode)
-	case 29:
+	case 28:
 		c.LDDTVX(opcode)
-	case 30:
+	case 29:
 		c.LDSTVX(opcode)
-	case 31:
+	case 30:
 		c.ADDIVX(opcode)
-	case 32:
+	case 31:
 		c.LDBVX(opcode)
-	case 33:
+	case 32:
 		c.LDIVX(opcode)
-	case 34:
+	case 33:
 		c.LDVX(opcode)
 	}
 	c.Pc += 2

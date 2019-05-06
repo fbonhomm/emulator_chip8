@@ -14,5 +14,5 @@ func TestLDSTVX(t *testing.T) {
 	c.V[3] = uint8(2)
 	c.LDSTVX(0x0300)
 
-	assert.Equal(t, uint8(2), c.SoundTimer)
+	assert.Equal(t, uint8(2), c.ST)
 }
