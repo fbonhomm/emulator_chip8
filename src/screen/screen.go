@@ -12,11 +12,12 @@ const black uint32 = 0x00000000
 
 // SCREEN - struct screen
 type SCREEN struct {
-	ToDraw  bool
-	Pixels  [height][width]uint8
-	Drawn   [height][width]sdl.Rect
-	Window  *sdl.Window
-	Surface *sdl.Surface
+	ToDraw        bool
+	Pixels        [height][width]uint8
+	HistoryPixels [height][width]uint8
+	Drawn         [height][width]sdl.Rect
+	Window        *sdl.Window
+	Surface       *sdl.Surface
 }
 
 func (s *SCREEN) initializeWindow() {
@@ -92,13 +93,16 @@ func (s *SCREEN) Apply() {
 
 	for y := uint32(0); y < height; y++ {
 		for x := uint32(0); x < width; x++ {
-			if s.Pixels[y][x] == 1 {
-				s.Surface.FillRect(&s.Drawn[y][x], white)
-			} else {
-				s.Surface.FillRect(&s.Drawn[y][x], black)
+			if s.Pixels[y][x] != s.HistoryPixels[y][x] {
+				if s.Pixels[y][x] == 1 {
+					s.Surface.FillRect(&s.Drawn[y][x], white)
+				} else {
+					s.Surface.FillRect(&s.Drawn[y][x], black)
+				}
 			}
 		}
 	}
 	s.Window.UpdateSurface()
 	s.ToDraw = false
+	s.HistoryPixels = s.Pixels
 }
