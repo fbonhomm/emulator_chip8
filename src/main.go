@@ -4,7 +4,6 @@ import (
 	"emulator/src/cpu"
 	"emulator/src/keyboard"
 	"emulator/src/screen"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,12 +14,7 @@ func main() {
 	var running = true
 	var s = screen.SCREEN{}
 	var c = cpu.CPU{}
-	// var gameName = flag.String("game", "", "-game [game name]")
-	//
-	// flag.Parse()
-	// if gameName == nil || *gameName == "" {
-	// 	log.Fatal("Load rom with -game [game name]")
-	// }
+
 	if len(os.Args) != 2 {
 		panic("Usage: ./program [roms]")
 	}
@@ -34,7 +28,6 @@ func main() {
 
 	s.Initialize()
 	c.Initialize(content)
-	fmt.Println(c.Memory)
 	for running {
 		running = keyboard.Event()
 		for idx := uint32(0); idx < opBySec; idx++ {

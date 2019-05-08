@@ -11,13 +11,12 @@ const fps uint32 = 60
 
 var delay uint32 = uint32(math.Round(float64(fps / opBysec)))
 
-// KEYBOARD struct screen
+// KEYBOARD - struct screen
 type KEYBOARD struct {
 	Pressed uint8
 	Code    sdl.Keycode
 }
 
-// keybords touch keyboard
 var keybords = []KEYBOARD{
 	KEYBOARD{0, sdl.K_0}, KEYBOARD{0, sdl.K_1}, KEYBOARD{0, sdl.K_2},
 	KEYBOARD{0, sdl.K_3}, KEYBOARD{0, sdl.K_4}, KEYBOARD{0, sdl.K_5},
@@ -27,12 +26,7 @@ var keybords = []KEYBOARD{
 	KEYBOARD{0, sdl.K_f},
 }
 
-// GetOpBySec return operation number by second
-func GetOpBySec() uint32 {
-	return opBysec
-}
-
-// Event method
+// Event - check keyboard event and return false for destroy screen
 func Event() bool {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch t := event.(type) {
@@ -45,38 +39,37 @@ func Event() bool {
 			if t.Type == sdl.KEYDOWN {
 				for i := 0; i < 15; i++ {
 					if t.Keysym.Sym == keybords[i].Code {
-						keybords[i].Pressed = 0
+						keybords[i].Pressed = 1
 					}
 				}
 			} else if t.Type == sdl.KEYUP {
 				for i := 0; i < 15; i++ {
 					if t.Keysym.Sym == keybords[i].Code {
-						keybords[i].Pressed = 1
+						keybords[i].Pressed = 0
 					}
 				}
 			}
-			break
 		}
 	}
 	return true
 }
 
-// Delay method return 1 if key down
+// Delay - execute delay
 func Delay() {
 	sdl.Delay(delay)
 }
 
-// CheckKey method return 1 if key down
+// GetOpBySec return operation number by second
+func GetOpBySec() uint32 {
+	return opBysec
+}
+
+// CheckKey - return 1 if pressed key or 0
 func CheckKey(key uint8) uint8 {
 	return keybords[key].Pressed
 }
 
-// GetKey method return 1 if key down
-func GetKey(key uint8) *KEYBOARD {
-	return &keybords[key]
-}
-
-// WaitPressKey method return 1 if key down
+// WaitPressKey - wait that a button are pressed and return button index
 func WaitPressKey() uint8 {
 	for true {
 		for idx := 0; idx < len(keybords); idx++ {

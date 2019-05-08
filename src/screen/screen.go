@@ -7,12 +7,10 @@ import (
 const pixelSize uint32 = 16
 const height uint32 = 32
 const width uint32 = 64
-const windowHeight uint32 = height * pixelSize
-const windowWidth uint32 = width * pixelSize
 const white uint32 = 0xffffffff
 const black uint32 = 0x00000000
 
-// SCREEN struct screen
+// SCREEN - struct screen
 type SCREEN struct {
 	ToDraw  bool
 	Pixels  [height][width]uint8
@@ -26,7 +24,7 @@ func (s *SCREEN) initializeWindow() {
 		"Emulator Chip8",
 		sdl.WINDOWPOS_UNDEFINED,
 		sdl.WINDOWPOS_UNDEFINED,
-		int32(windowWidth), int32(windowHeight),
+		int32(width*pixelSize), int32(height*pixelSize),
 		sdl.WINDOW_SHOWN,
 	)
 
@@ -66,7 +64,7 @@ func (s *SCREEN) initializeDrawn() {
 	}
 }
 
-// Initialize method
+// Initialize - screen initialize
 func (s *SCREEN) Initialize() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
@@ -77,7 +75,7 @@ func (s *SCREEN) Initialize() {
 	s.initializeDrawn()
 }
 
-// Destroy window destroy
+// Destroy - destroy screen
 func (s *SCREEN) Destroy() {
 	s.Surface.Free()
 	s.Window.Destroy()
@@ -86,7 +84,7 @@ func (s *SCREEN) Destroy() {
 	sdl.Quit()
 }
 
-// Apply method
+// Apply - changement apply on screen
 func (s *SCREEN) Apply() {
 	if s.ToDraw == false {
 		return

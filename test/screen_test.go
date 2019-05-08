@@ -30,7 +30,13 @@ func TestApply(t *testing.T) {
 
 	s.Pixels[0][0] = 1
 	s.Pixels[31][63] = 1
+	s.ToDraw = true
 	s.Apply()
-	time.Sleep(5000 * time.Millisecond)
+	time.Sleep(2000 * time.Millisecond)
+	s.ToDraw = true
+	s.Pixels[31][0] = 1
+	s.Pixels[0][63] = 1
+	s.Apply()
+	time.Sleep(2000 * time.Millisecond)
 	s.Destroy()
 }

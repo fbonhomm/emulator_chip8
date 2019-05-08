@@ -2,18 +2,13 @@ package cpu
 
 import (
 	"emulator/src/screen"
-	"fmt"
 )
 
-// 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
-// 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
-// 0x200-0xFFF - Program ROM and work RAM
-
-const sizeMemory uint16 = 4096 // taille de la memoire total
-const startMemory uint16 = 512 // adresse du debut de la memoire
-const nbrRegister uint8 = 16   // nombre total de registres
-const nbrLevelStack uint8 = 16 // nombre de niveaux pour la stack
-const nbrOpcode uint8 = 35     // nombre de niveaux pour la stack
+const sizeMemory uint16 = 4096
+const startMemory uint16 = 512
+const nbrRegister uint8 = 16
+const nbrLevelStack uint8 = 16
+const nbrOpcode uint8 = 35
 
 var opcodeMask = []uint16{
 	0x0000, 0xFFFF, 0xFFFF, 0xF000, 0xF000, 0xF000, 0xF000, 0xF00F, 0xF000,
@@ -29,44 +24,44 @@ var opcodeID = []uint16{
 }
 
 var fonts = []uint8{
-	0x0F, 0x90, 0x90, 0x90, 0xF0, // 0
-	0x20, 0x60, 0x20, 0x20, 0x70, // 1
-	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
-	0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
-	0x90, 0x90, 0xF0, 0x10, 0x10, // 4
-	0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
-	0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
-	0xF0, 0x10, 0x20, 0x40, 0x40, // 7
-	0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
-	0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
-	0xF0, 0x90, 0xF0, 0x90, 0x90, // A
-	0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
-	0xF0, 0x80, 0x80, 0x80, 0xF0, // C
-	0xE0, 0x90, 0x90, 0x90, 0xE0, // D
-	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-	0xF0, 0x80, 0xF0, 0x80, 0x80, // F
+	0x0F, 0x90, 0x90, 0x90, 0xF0,
+	0x20, 0x60, 0x20, 0x20, 0x70,
+	0xF0, 0x10, 0xF0, 0x80, 0xF0,
+	0xF0, 0x10, 0xF0, 0x10, 0xF0,
+	0x90, 0x90, 0xF0, 0x10, 0x10,
+	0xF0, 0x80, 0xF0, 0x10, 0xF0,
+	0xF0, 0x80, 0xF0, 0x90, 0xF0,
+	0xF0, 0x10, 0x20, 0x40, 0x40,
+	0xF0, 0x90, 0xF0, 0x90, 0xF0,
+	0xF0, 0x90, 0xF0, 0x10, 0xF0,
+	0xF0, 0x90, 0xF0, 0x90, 0x90,
+	0xE0, 0x90, 0xE0, 0x90, 0xE0,
+	0xF0, 0x80, 0x80, 0x80, 0xF0,
+	0xE0, 0x90, 0x90, 0x90, 0xE0,
+	0xF0, 0x80, 0xF0, 0x80, 0xF0,
+	0xF0, 0x80, 0xF0, 0x80, 0x80,
 }
 
-// CPU primary struct
+// CPU - cpu struct
 type CPU struct {
-	Memory [sizeMemory]uint8     // tableaux qui represente la memoire
-	V      [nbrRegister]uint8    // tableaux qui represente les registres V{0..F}
-	Stack  [nbrLevelStack]uint16 // tableaux qui represente la stack de sauvegarde
-	Pc     uint16                // represente la tete de lecture de la memoire PC programCounter
-	I      uint16                // stocke une adresse memoire
-	Sp     uint8                 // represente la tete de lecture de la stack stackPointer
-	DT     uint8                 // mimuterie systeme
-	ST     uint8                 // mimuterie sonore
+	Stack  [nbrLevelStack]uint16
+	Memory [sizeMemory]uint8
+	V      [nbrRegister]uint8
+	Pc     uint16
+	I      uint16
+	Sp     uint8
+	DT     uint8
+	ST     uint8
 }
 
-// Initialize init cpu
+// Initialize - initialize cpu
 func (c *CPU) Initialize(rom []uint8) {
 	copy(c.Memory[0:], fonts)
 	copy(c.Memory[0x200:], rom)
 	c.Pc = 0x200
 }
 
-// IdentifyOpcode return index opcode or -1 if not found
+// IdentifyOpcode - return index opcode or 0 if not found
 func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	for idx := uint8(0); idx < nbrOpcode; idx++ {
 		if (opcode & opcodeMask[idx]) == opcodeID[idx] {
@@ -76,7 +71,7 @@ func (c *CPU) IdentifyOpcode(opcode uint16) uint8 {
 	return 0
 }
 
-// DecreaseTimer decrease cpu timer
+// DecreaseTimer - decrease delay timer and sound timer
 func (c *CPU) DecreaseTimer() {
 	if c.DT > 0 {
 		c.DT--
@@ -86,114 +81,80 @@ func (c *CPU) DecreaseTimer() {
 	}
 }
 
-// InterpreterOpcode return index opcode or -1 if not found
+// InterpreterOpcode - interprete opcode
 func (c *CPU) InterpreterOpcode(display *screen.SCREEN) {
 	opcode := ((uint16(c.Memory[c.Pc]) << 8) + uint16(c.Memory[c.Pc+1]))
 	idx := c.IdentifyOpcode(opcode)
 
-	fmt.Printf("opcode: %x, idx: %d\n", opcode, idx)
 	switch idx {
 	case 0:
 		break
 	case 1:
 		c.CLS(display)
-		break
 	case 2:
 		c.RET()
-		break
 	case 3:
 		c.JPA(opcode)
-		break
 	case 4:
 		c.CA(opcode)
-		break
 	case 5:
 		c.SEVXB(opcode)
-		break
 	case 6:
 		c.SNEVXB(opcode)
-		break
 	case 7:
 		c.SEVXVY(opcode)
-		break
 	case 8:
 		c.LDVXB(opcode)
-		break
 	case 9:
 		c.ADDVXB(opcode)
-		break
 	case 10:
 		c.LDVXVY(opcode)
-		break
 	case 11:
 		c.ORVXVY(opcode)
-		break
 	case 12:
 		c.ANDVXVY(opcode)
-		break
 	case 13:
 		c.XORVXVY(opcode)
-		break
 	case 14:
 		c.ADDVXVY(opcode)
-		break
 	case 15:
 		c.SUBVXVY(opcode)
-		break
 	case 16:
 		c.SHRVX(opcode)
-		break
 	case 17:
 		c.SUBNVXVY(opcode)
-		break
 	case 18:
 		c.SHLVX(opcode)
-		break
 	case 19:
 		c.SNEVXVY(opcode)
-		break
 	case 20:
 		c.LDIA(opcode)
-		break
 	case 21:
 		c.JPV0(opcode)
-		break
 	case 22:
 		c.RNDVXB(opcode)
-		break
 	case 23:
 		c.DRWVXVY(display, opcode)
-		break
 	case 24:
 		c.SKPVX(opcode)
-		break
 	case 25:
 		c.SKNPVX(opcode)
-		break
 	case 26:
 		c.LDVXDT(opcode)
-		break
 	case 27:
 		c.LDVXK(opcode)
-		break
 	case 28:
 		c.LDDTVX(opcode)
-		break
 	case 29:
 		c.LDSTVX(opcode)
-		break
 	case 30:
 		c.ADDIVX(opcode)
-		break
 	case 31:
 		c.LDBVX(opcode)
-		break
 	case 32:
 		c.LDIVX(opcode)
-		break
 	case 33:
 		c.LDVX(opcode)
-		break
 	}
 	c.Pc += 2
 }
