@@ -7,8 +7,6 @@ import (
 const pixelSize uint32 = 16
 const height uint32 = 32
 const width uint32 = 64
-const white uint32 = 0xffffffff
-const black uint32 = 0x00000000
 
 // SCREEN - struct screen
 type SCREEN struct {
@@ -16,6 +14,7 @@ type SCREEN struct {
 	Pixels        [height][width]uint8
 	HistoryPixels [height][width]uint8
 	Drawn         [height][width]sdl.Rect
+	Color         [2]*sdl.Surface
 	Window        *sdl.Window
 	Surface       *sdl.Surface
 }
@@ -48,7 +47,7 @@ func (s *SCREEN) initializeSurface() {
 	}
 
 	s.Surface = surface
-	s.Surface.FillRect(nil, black)
+	s.Surface.FillRect(nil, 0x00000000)
 	s.Window.UpdateSurface()
 }
 
@@ -65,6 +64,17 @@ func (s *SCREEN) initializeDrawn() {
 	}
 }
 
+func (s *SCREEN) initializeColor() {
+	black, _ := sdl.CreateRGBSurface(sdl.SWSURFACE, int32(pixelSize), int32(pixelSize), 32, 0, 0, 0, 0)
+	white, _ := sdl.CreateRGBSurface(sdl.SWSURFACE, int32(pixelSize), int32(pixelSize), 32, 0, 0, 0, 0)
+
+	black.FillRect(nil, 0x00000000)
+	white.FillRect(nil, 0xffffffff)
+
+	s.Color[0] = black
+	s.Color[1] = white
+}
+
 // Initialize - screen initialize
 func (s *SCREEN) Initialize() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -74,6 +84,7 @@ func (s *SCREEN) Initialize() {
 	s.initializeWindow()
 	s.initializeSurface()
 	s.initializeDrawn()
+	s.initializeColor()
 }
 
 // Destroy - destroy screen
@@ -94,11 +105,7 @@ func (s *SCREEN) Apply() {
 	for y := uint32(0); y < height; y++ {
 		for x := uint32(0); x < width; x++ {
 			if s.Pixels[y][x] != s.HistoryPixels[y][x] {
-				if s.Pixels[y][x] == 1 {
-					s.Surface.FillRect(&s.Drawn[y][x], white)
-				} else {
-					s.Surface.FillRect(&s.Drawn[y][x], black)
-				}
+				s.Color[s.Pixels[y][x]].Blit(nil, s.Surface, &s.Drawn[y][x])
 			}
 		}
 	}
