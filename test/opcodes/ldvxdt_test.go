@@ -1,7 +1,7 @@
 package test
 
 import (
-	"emulator/src/cpu"
+	"github.com/fbonhomm/emulator_chip8/src/cpu"
 
 	"testing"
 

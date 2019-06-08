@@ -1,7 +1,7 @@
 package cpu
 
 import (
-	"emulator/src/keyboard"
+	"github.com/fbonhomm/emulator_chip8/src/keyboard"
 )
 
 // SKPVX Ex9E - Skip next instruction if key with the value of Vx is pressed.

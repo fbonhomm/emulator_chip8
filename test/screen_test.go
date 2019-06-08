@@ -1,7 +1,7 @@
 package test
 
 import (
-	"emulator/src/screen"
+	"github.com/fbonhomm/emulator_chip8/src/screen"
 	"testing"
 	"time"
 

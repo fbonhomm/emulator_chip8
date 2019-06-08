@@ -1,7 +1,7 @@
 package cpu
 
 import (
-	"emulator/src/screen"
+	"github.com/fbonhomm/emulator_chip8/src/screen"
 )
 
 const sizeMemory uint16 = 4096

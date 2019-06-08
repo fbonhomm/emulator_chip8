@@ -1,9 +1,9 @@
 package test
 
 import (
-	"emulator/src/cpu"
+	"github.com/fbonhomm/emulator_chip8/src/cpu"
 	
-	"emulator/src/screen"
+	"github.com/fbonhomm/emulator_chip8/src/screen"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

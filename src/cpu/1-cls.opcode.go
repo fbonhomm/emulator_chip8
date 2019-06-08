@@ -1,6 +1,6 @@
 package cpu
 
-import "emulator/src/screen"
+import "github.com/fbonhomm/emulator_chip8/src/screen"
 
 // CLS 00E0 - Clear the display.
 func (c *CPU) CLS(s *screen.SCREEN) {

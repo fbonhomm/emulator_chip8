@@ -1,6 +1,6 @@
 package cpu
 
-import "emulator/src/keyboard"
+import "github.com/fbonhomm/emulator_chip8/src/keyboard"
 
 // LDVXK Fx0A - Wait for a key press, store the value of the key in Vx.
 func (c *CPU) LDVXK(opcode uint16) {

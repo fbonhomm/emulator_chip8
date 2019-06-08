@@ -1,9 +1,9 @@
 package main
 
 import (
-	"emulator/src/cpu"
-	"emulator/src/keyboard"
-	"emulator/src/screen"
+	"github.com/fbonhomm/emulator_chip8/src/cpu"
+	"github.com/fbonhomm/emulator_chip8/src/keyboard"
+	"github.com/fbonhomm/emulator_chip8/src/screen"
 	"io/ioutil"
 	"log"
 	"os"

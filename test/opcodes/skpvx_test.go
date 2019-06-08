@@ -1,8 +1,8 @@
 package test
 
 import (
-	"emulator/src/cpu"
-	"emulator/src/keyboard"
+	"github.com/fbonhomm/emulator_chip8/src/cpu"
+	"github.com/fbonhomm/emulator_chip8/src/keyboard"
 	
 	"testing"
 

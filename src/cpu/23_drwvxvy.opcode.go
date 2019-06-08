@@ -1,7 +1,7 @@
 package cpu
 
 import (
-	"emulator/src/screen"
+	"github.com/fbonhomm/emulator_chip8/src/screen"
 )
 
 // DRWVXVY Dxyn - Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
